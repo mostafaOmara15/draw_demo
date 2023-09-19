@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:ui' as ui;
-
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -15,7 +14,7 @@ class TouchPainter extends StatefulWidget {
 
 class _TouchPainterState extends State<TouchPainter> {
   List<Offset?> points = [];
-  GlobalKey _globalKey = GlobalKey();
+  GlobalKey globalKey = GlobalKey();
   bool isSaving = false;
   final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
       GlobalKey<ScaffoldMessengerState>();
@@ -39,11 +38,11 @@ class _TouchPainterState extends State<TouchPainter> {
               children: [
                 Positioned.fill(
                   child: RepaintBoundary(
-                    key: _globalKey,
+                    key: globalKey,
                     child: GestureDetector(
                       onPanUpdate: (details) {
                         setState(() {
-                          RenderBox renderBox = _globalKey.currentContext!
+                          RenderBox renderBox = globalKey.currentContext!
                               .findRenderObject() as RenderBox;
                           points.add(
                               renderBox.globalToLocal(details.globalPosition));
@@ -63,10 +62,10 @@ class _TouchPainterState extends State<TouchPainter> {
                                 painter: ImagePainter(snapshot.data, points),
                               );
                             }else{
-                              return Center(child: CircularProgressIndicator());
+                              return const Center(child: CircularProgressIndicator());
                             }
                           } else {
-                            return Center(child: SizedBox());
+                            return const Center(child: SizedBox());
                           }
                         },
                       ),
@@ -78,7 +77,7 @@ class _TouchPainterState extends State<TouchPainter> {
           ),
           ElevatedButton(onPressed: (){
             isSaving ? null : saveImage();
-          }, child: Text("Save"))
+          }, child: const Text("Save"))
         ],
       ),
     );
@@ -90,7 +89,7 @@ class _TouchPainterState extends State<TouchPainter> {
     });
 
     RenderRepaintBoundary boundary =
-        _globalKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+        globalKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
     ui.Image image = await boundary.toImage();
     ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
     Uint8List pngBytes = byteData!.buffer.asUint8List();
@@ -118,13 +117,11 @@ class _TouchPainterState extends State<TouchPainter> {
 class ImagePainter extends CustomPainter {
   final ui.Image? image;
   final List<Offset?> points;
-
   ImagePainter(this.image, this.points);
 
   @override
   void paint(Canvas canvas, Size size) {
     canvas.drawImage(image!, Offset.zero, Paint());
-
     final paint = Paint()
       ..color = Colors.black
       ..strokeWidth = 4.0
