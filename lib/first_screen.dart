@@ -18,6 +18,7 @@ class _CameraScreenState extends State<CameraScreen> {
       if (value != null) {
         imageCameraFile = File(value.path);
         pickedImagePath = value.path;
+        print(pickedImagePath);
       }
     });
 

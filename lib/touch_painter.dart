@@ -25,13 +25,13 @@ class _TouchPainterState extends State<TouchPainter> {
   List<Offset?> points = [];
   GlobalKey globalKey = GlobalKey();
   bool isSaving = false;
-  final int maxImageSize = 256; // Maximum image size in kilobytes
+  final int maxImageSize = 512;
 
 
   Future<ByteData> compressImage(String imagePath) async {
     final file = File(imagePath);
     final originalBytes = await file.readAsBytes();
-    final imageSize = originalBytes.lengthInBytes / 256; // Size in kilobytes
+    final imageSize = originalBytes.lengthInBytes / 1024; // Size in kilobytes
 
     if (imageSize <= maxImageSize) {
       // Image doesn't need compression
@@ -139,31 +139,33 @@ class _TouchPainterState extends State<TouchPainter> {
   }
 
   Future<ui.Image> loadImage() async {
-    final file = File(widget.path);
-    final originalBytes = await file.readAsBytes();
-    final imageSize = originalBytes.lengthInBytes / 256; // Size in kilobytes
-    if (imageSize <= maxImageSize) {// Image doesn't need compression
-      print("hi");
-      ByteData byteData = ByteData.view(originalBytes.buffer);
-    }
-
-    final compressedBytes = await FlutterImageCompress.compressWithList(
-      originalBytes,
-      minHeight: MediaQuery.of(context).size.height.toInt(),
-      minWidth: MediaQuery.of(context).size.width.toInt(),
-      quality: 90,
-    );
-    ByteData byteData = ByteData.view(Uint8List.fromList(compressedBytes).buffer);
-
-    // final convertedFile = await file.readAsBytes();
-    // ByteData byteData = ByteData.view(convertedFile.buffer);
-    //
-    // final ByteData byteData = await rootBundle.load(widget.path);
+    final ByteData byteData = await rootBundle.load("assets/WhatsApp Image 2023-09-18 at 5.00.22 PM (1).jpeg");
     final Uint8List bytes = byteData.buffer.asUint8List();
     final codec = await ui.instantiateImageCodec(bytes);
     final frame = await codec.getNextFrame();
     return frame.image;
   }
+
+  // Future<ui.Image> loadImage() async {
+  //   final file = File(widget.path);
+  //   final originalBytes = await file.readAsBytes();
+  //   final imageSize = originalBytes.lengthInBytes / 512;
+  //   if (imageSize <= maxImageSize) {
+  //     ByteData byteData = ByteData.view(originalBytes.buffer);
+  //   }
+  //
+  //   final compressedBytes = await FlutterImageCompress.compressWithList(
+  //     originalBytes,
+  //     minHeight: 800,
+  //     minWidth: 800,
+  //     quality: 90,
+  //   );
+  //   ByteData byteData = ByteData.view(Uint8List.fromList(compressedBytes).buffer);
+  //   final Uint8List bytes = byteData.buffer.asUint8List();
+  //   final codec = await ui.instantiateImageCodec(bytes);
+  //   final frame = await codec.getNextFrame();
+  //   return frame.image;
+  // }
 }
 
 class ImagePainter extends CustomPainter {
